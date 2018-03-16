@@ -3,10 +3,13 @@ from .models import Gist
 from .serializers import GistSerializer
 from rest_framework import mixins
 from django.db.models import Q
+from .permissions import IsOwner
+from rest_framework.permissions import IsAuthenticated
 
 class GistsAPIView(mixins.CreateModelMixin, generics.ListAPIView):
     
     serializer_class = GistSerializer
+    permission_classes = (IsAuthenticated,)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -15,7 +18,7 @@ class GistsAPIView(mixins.CreateModelMixin, generics.ListAPIView):
         return self.create(request, *args, **kwargs)
 
     def get_queryset(self):
-        qs = Gist.objects.all()
+        qs = Gist.objects.filter(user=self.request.user)
         query = self.request.GET.get('q')
         if query is not None:
             qs = qs.filter(Q(title__icontains=query) | Q(text__icontains=query)).distinct()
@@ -23,4 +26,5 @@ class GistsAPIView(mixins.CreateModelMixin, generics.ListAPIView):
 
 class GistsRUDView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = GistSerializer
+    permission_classes = [IsOwner]
     queryset = Gist.objects.all()
