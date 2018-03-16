@@ -8,8 +8,8 @@ class GistsAPIView(mixins.CreateModelMixin, generics.ListAPIView):
     
     serializer_class = GistSerializer
 
-    #def perform_create(self, serializer):
-        #serializer.save(user=self.request.user)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
