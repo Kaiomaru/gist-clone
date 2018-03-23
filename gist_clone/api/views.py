@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 class GistsAPIView(mixins.CreateModelMixin, generics.ListAPIView):
     
     serializer_class = GistSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -26,5 +26,13 @@ class GistsAPIView(mixins.CreateModelMixin, generics.ListAPIView):
 
 class GistsRUDView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = GistSerializer
-    permission_classes = [IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner]
     queryset = Gist.objects.all()
+
+class StarredAPIView(generics.ListAPIView):
+    serializer_class = GistSerializer
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def get_queryset(self):
+        qs = Gist.objects.filter(user=self.request.user).filter(starred=True)
+        return qs

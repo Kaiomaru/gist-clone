@@ -10,6 +10,7 @@ class GistSerializer(serializers.ModelSerializer):
             'user',
             'title',
             'text',
-            'timestamp'
+            'starred',
+            'timestamp',
         ]
-        read_only_fields = ['user']
+        read_only_fields = ['user', 'timestamp']
