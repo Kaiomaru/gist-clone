@@ -29,6 +29,7 @@ class GistsRUDView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsOwner]
     queryset = Gist.objects.all()
 
+
 class StarredAPIView(generics.ListAPIView):
     serializer_class = GistSerializer
     permission_classes = [IsAuthenticated, IsOwner]

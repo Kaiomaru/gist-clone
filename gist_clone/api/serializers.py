@@ -14,3 +14,11 @@ class GistSerializer(serializers.ModelSerializer):
             'timestamp',
         ]
         read_only_fields = ['user', 'timestamp']
+
+    def validate_title(self, value):
+        qs = Gist.objects.filter(title__iexact=value)
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise serializers.ValidationError('This title has already been used')
+        return value
